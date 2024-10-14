@@ -7,6 +7,8 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -26,14 +28,24 @@ export default function Login() {
 
       const data = await response.json();
 
-      if (response.ok) {
-        localStorage.setItem("token", data.token);
-        navigate("/products");
-      } else {
+      if (!response.ok) {
+        setSnackbarMessage("User is not registered!");
+        setSnackbarSeverity("error");
         setOpenSnackbar(true);
+      } else {
+        localStorage.setItem("token", data.token);
+        setSnackbarMessage("Login successful! Redirecting to products page...");
+        setSnackbarSeverity("success");
+        setOpenSnackbar(true);
+
+        setTimeout(() => {
+          navigate("/products");
+        }, 1500);
       }
     } catch (error) {
       console.error("Error during login", error);
+      setSnackbarMessage(" User is not registered!");
+      setSnackbarSeverity("error");
       setOpenSnackbar(true);
     }
   };
@@ -114,10 +126,10 @@ export default function Login() {
       >
         <Alert
           onClose={handleCloseSnackbar}
-          severity="error"
+          severity={snackbarSeverity}
           sx={{ width: "100%" }}
         >
-          User is not registered!
+          {snackbarMessage}
         </Alert>
       </Snackbar>
     </div>

@@ -1,4 +1,3 @@
-// src/pages/Products.jsx
 import ProductList from "../components/ProductList";
 
 export default function Products() {
